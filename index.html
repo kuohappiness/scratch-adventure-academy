@@ -67,4 +67,72 @@ function report(s){
  show('report');
 }
 $('finish').onclick=()=>{level=getP().recommended;home()};load();login();
+</script><script>
+/* v0.3：在瀏覽器內讀取 Scratch 作品，不傳送檔案。 */
+let inspected=null;
+const panel=document.createElement('div');panel.className='guide';panel.style.margin='16px 0';
+panel.innerHTML='<h3>🔎 作品健檢（測試版）</h3><p class="small">可選擇 .sb3 檔案分析程式結構。只在這台裝置處理，沒有上傳；無法自動證明題目功能正確。</p><input type="file" id="projectUpload" accept=".sb3"><p id="projectFindings" class="small muted">尚未分析作品。</p>';
+document.getElementById('done').parentElement.insertAdjacentElement('afterend',panel);
+async function inspectSb3(file){
+ if(!/\.sb3$/i.test(file.name))throw Error('請選擇Scratch .sb3檔案');
+ if(file.size>15e6)throw Error('檔案過大（目前上限15MB）');
+ const ab=await file.arrayBuffer(),d=new DataView(ab),b=new Uint8Array(ab),td=new TextDecoder();
+ let e=-1;for(let i=b.length-22;i>=Math.max(0,b.length-65557);--i)if(d.getUint32(i,true)===0x06054b50){e=i;break}
+ if(e<0)throw Error('找不到ZIP結尾');
+ let at=d.getUint32(e+16,true),n=d.getUint16(e+10,true),entry;
+ for(let i=0;i<n;i++){
+  if(at+46>b.length||d.getUint32(at,true)!==0x02014b50)throw Error('ZIP目錄有誤');
+  const nameLen=d.getUint16(at+28,true),ex=d.getUint16(at+30,true),com=d.getUint16(at+32,true),name=td.decode(b.slice(at+46,at+46+nameLen));
+  if(name==='project.json'){entry={method:d.getUint16(at+10,true),size:d.getUint32(at+20,true),out:d.getUint32(at+24,true),offset:d.getUint32(at+42,true)};break}
+  at+=46+nameLen+ex+com;
+ }
+ if(!entry)throw Error('作品不含project.json');
+ if(entry.out>5e6)throw Error('程式資料太大');
+ let j=entry.offset;if(d.getUint32(j,true)!==0x04034b50)throw Error('ZIP資料有誤');
+ let start=j+30+d.getUint16(j+26,true)+d.getUint16(j+28,true),raw=b.slice(start,start+entry.size);
+ if(raw.length!==entry.size)throw Error('壓縮資料不完整');
+ if(entry.method===8){
+  if(!('DecompressionStream' in window))throw Error('請改用新版Chrome或Edge');
+  try{raw=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer())}
+  catch{throw Error('解壓縮失敗，請嘗試新版Chrome或Edge')}
+ }else if(entry.method!==0)throw Error('壓縮方式不支援');
+ const p=JSON.parse(td.decode(raw));if(!Array.isArray(p.targets))throw Error('不是Scratch 3作品');
+ let total=0,detached=0,repeat=0,loops=0,procedures=0,variables=0;
+ for(const t of p.targets){
+  variables+=Object.keys(t.variables||{}).length;
+  const blocks=t.blocks||{},signatures=new Map();
+  for(const [id,x] of Object.entries(blocks)){
+   if(!x?.opcode)continue;total++;
+   if(x.topLevel&&!x.next&&!x.opcode.startsWith('event_')&&x.opcode!=='procedures_definition')detached++;
+   if(['control_repeat','control_forever','control_repeat_until'].includes(x.opcode))loops++;
+   if(x.opcode==='procedures_definition')procedures++;
+   if(x.topLevel&&x.next){let curr=id,chain=[],seen=new Set();while(curr&&!seen.has(curr)&&chain.length<8){seen.add(curr);const v=blocks[curr];if(!v?.opcode)break;chain.push(v.opcode);curr=v.next}
+    if(chain.length>=4){const k=chain.join('/');signatures.set(k,(signatures.get(k)||0)+1)}
+   }
+  }
+  for(const v of signatures.values())if(v>1)repeat+=v-1;
+ }
+ if(!total)throw Error('沒有偵測到程式積木');
+ const suggestions=[];
+ if(detached)suggestions.push('有'+detached+'個單獨存在的非事件積木；可檢查是否為測試時留下的。');
+ if(repeat)suggestions.push('有'+repeat+'組開頭相似的程式，可看看是否值得合併。');
+ if(total>40&&!procedures)suggestions.push('作品較大，考慮使用自訂積木整理可重用的動作。');
+ if(!suggestions.length)suggestions.push('尚未找到常見的結構改善線索；仍需實際操作測試。');
+ return {total,detached,repeat,loops,procedures,variables,suggestions};
+}
+document.getElementById('projectUpload').onchange=async(e)=>{
+ inspected=null;const output=document.getElementById('projectFindings'),file=e.target.files?.[0];if(!file)return;output.textContent='正在檢查…';
+ try{inspected=await inspectSb3(file);output.textContent='已讀取'+inspected.total+'個積木；'+inspected.suggestions.join(' ')}
+ catch(err){output.textContent='無法讀取：'+err.message}
+};
+document.addEventListener('click',e=>{if(e.target?.id==='launch'){inspected=null;document.getElementById('projectUpload').value='';document.getElementById('projectFindings').textContent='尚未分析作品。'}},true);
+const previousDone=document.getElementById('done').onclick;
+document.getElementById('done').onclick=()=>{
+ previousDone();if(!inspected)return;
+ const p=getP(),s=p.sessions[p.sessions.length-1];s.codeAnalysis=inspected;
+ if(inspected.detached||inspected.repeat)s.adaptation.warmup='程式進化練習：找一段可能多餘或重複的積木，調整後確認原功能仍能使用。';
+ save();report(s);
+ const detail=document.createElement('p');detail.className='notice';detail.textContent='🔎 作品健檢：'+inspected.suggestions.join(' ');
+ document.getElementById('diagnosis').insertAdjacentElement('afterend',detail);
+};
 </script></body></html>
