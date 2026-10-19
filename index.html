@@ -1,146 +1,230 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Scratch 冒險學院｜個人化闖關</title><style>
-:root{--ink:#22314a;--muted:#66758c;--brand:#355db9;--pale:#eaf0ff;--bg:#f5f7fc;--line:#dce4f1;--green:#167b63}*{box-sizing:border-box}body{margin:0;font-family:system-ui,'Noto Sans TC',sans-serif;color:var(--ink);background:radial-gradient(circle at 0 0,#e6edff,transparent 40%),var(--bg)}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:10px 16px;font-weight:700}button:disabled{opacity:.5;cursor:not-allowed}.primary{background:var(--brand);color:#fff}.ghost{color:var(--brand);background:var(--pale)}.subtle{background:#edf1f7;color:var(--ink)}.app{max-width:1160px;margin:auto;padding:24px}header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:24px}.brand{font-size:22px;font-weight:850}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--brand)}h1{font-size:clamp(25px,4vw,39px);line-height:1.3;margin:8px 0 12px}h2{font-size:22px;margin:0 0 10px}h3{font-size:17px;margin:0 0 10px}p{line-height:1.65}.muted,.hint{color:var(--muted)}.small{font-size:13px}.panel{border:1px solid var(--line);background:#fff;border-radius:22px;padding:22px;box-shadow:0 8px 30px #28385b08}.cols{display:grid;grid-template-columns:1.45fr 1fr;gap:18px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.avatar{border:2px solid var(--line);border-radius:18px;background:white;padding:12px;display:grid;place-items:center;min-height:105px;gap:4px}.avatar strong{font-size:13px}.avatar span{font-size:40px}.avatar.on{border-color:#446ad8;background:#edf2ff}.field{display:block;margin:15px 0}.field span{display:block;margin-bottom:6px;font-weight:700}input,select{border:1px solid #cad5e5;border-radius:11px;padding:12px;width:100%;background:white}#home,#login,#play,#report{display:none}.chip{display:inline-block;padding:5px 10px;border-radius:99px;background:#edf2ff;color:#3153ad;font-size:12px;font-weight:800}.level-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.level{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fff;text-align:left}.level:hover{border-color:#7589d5}.level.selected{border:2px solid var(--brand);background:#f1f5ff}.level.done{background:#f0fbf5}.level-title{font-weight:800;margin:7px 0}.level small{color:var(--muted)}.stat{background:#f2f5fd;border-radius:14px;padding:13px;flex:1;min-width:110px}.stat b{font-size:21px;display:block}.progress{height:12px;background:#e6ecf6;border-radius:10px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#5da9df,#546bd0)}.options{display:grid;gap:8px}.option{background:#f2f5fc;text-align:left;color:var(--ink);font-weight:500}.option.chosen{outline:2px solid var(--brand)}.notice{border-left:4px solid #65a78a;background:#eff9f4;border-radius:8px;padding:12px}.warning{border-left-color:#e4a23b;background:#fff8e8}.question{padding:15px;background:#f7f9fe;border-radius:14px;margin-top:12px}.tasks{display:grid;gap:11px;margin:12px 0}.task{display:flex;gap:10px;align-items:start;background:#f7f9fd;padding:12px;border-radius:12px}.task input{width:auto;margin-top:5px;accent-color:#3b70c2}.timer{font-weight:800;font-variant-numeric:tabular-nums}.divider{border:0;border-top:1px solid var(--line);margin:18px 0}.layout{display:grid;grid-template-columns:1fr 310px;gap:20px}.guide{background:#f0f4ff;border-radius:14px;padding:14px}.foot{text-align:center;font-size:12px;color:#77839a;padding:24px}.controls{display:flex;gap:8px;flex-wrap:wrap}.link{color:var(--brand)}@media(max-width:800px){.cols,.layout{grid-template-columns:1fr}.grid{grid-template-columns:repeat(3,1fr)}.app{padding:13px}.panel{padding:16px}.level-grid{grid-template-columns:1fr}}@media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
-</style></head><body><div class="app"><header><div class="brand">🚀 Scratch 冒險學院 <span class="chip">個人化試行版 v0.3.2</span></div><div id="who" class="muted small"></div></header>
-<section id="login" class="panel"><div class="eyebrow">建立你的冒險檔案</div><h1>準備好當程式冒險家了嗎？</h1><p class="muted">不需要密碼或網路。這是本機學習暱稱，不是真正的線上帳號。</p><label class="field"><span>姓名／暱稱</span><input id="name" maxlength="24" placeholder="例如：小小程式家" autocomplete="off"></label><label class="field"><span>帳號代號（限英文、數字、底線）</span><input id="account" maxlength="25" placeholder="例如：coder01" autocomplete="off"></label><h3>選一位冒險夥伴</h3><div id="avatars" class="grid"></div><p class="small muted">角色使用 emoji 示意。花苗精靈為原創植物角色，不使用受商標／著作權保護的官方圖像。</p><div id="loginError" class="small" style="color:#c13c45"></div><button class="primary" id="start">進入冒險學院 →</button><div id="profiles" style="margin-top:16px"></div></section>
-<section id="home"><div class="guide" style="margin:12px 0"><strong>🔎 新功能：Scratch 作品健檢</strong><p class="small">選擇任一關卡後，往下找到「作品健檢（測試版）」，上傳 .sb3 作品即可取得結構分析。此功能目前不在首頁直接上傳。</p></div><div class="cols"><div class="panel"><div class="eyebrow">冒險地圖</div><h1 id="greeting"></h1><p class="muted" id="nextNote"></p><div class="row" id="stats"></div><hr class="divider"><h2>10級闖關地圖</h2><p class="small muted">故事順序可調整；下一級依本次表現提出建議，你也可以自行選關。</p><div id="levels" class="level-grid"></div></div><div class="panel"><h2>今日任務</h2><div id="detail"></div><hr class="divider"><h3>學習設定</h3><p class="small muted">每次約60分鐘；預估時間僅用於提示，不會扣分。</p><div class="controls"><button id="export" class="ghost">匯出學習紀錄 JSON</button><button id="switch" class="subtle">切換學員</button></div><p class="small muted">資料保存在此瀏覽器的本機儲存區。清除網站資料或使用無痕模式可能導致紀錄消失，請定期匯出。</p><p class="small muted">Scratch 編輯器：<a class="link" href="https://scratch.mit.edu/projects/editor/" target="_blank" rel="noopener">開啟官方 Scratch ↗</a></p></div></div></section>
-<section id="play"><div class="layout"><div class="panel"><div class="row between"><div><div class="eyebrow" id="lvlLabel"></div><h1 id="missionTitle"></h1></div><button class="subtle" id="backHome">返回地圖</button></div><p id="story"></p><div class="row"><span class="chip" id="skills"></span><span class="chip" id="dif"></span></div><hr class="divider"><h2>主線任務</h2><p class="small muted">在 Scratch 中製作作品，完成一項就打勾。此版本使用自行勾選，尚非程式自動驗證。</p><div id="taskList" class="tasks"></div><h3>進階挑戰（可選）</h3><p id="bonus"></p><div class="row"><button id="scratch" class="ghost">開啟 Scratch 編輯器 ↗</button><button id="done" class="primary">結束本次任務並回顧</button></div><hr class="divider"><h3>任務後觀察（幫助調整下一關）</h3><p class="small muted">完成後花約1分鐘填寫，無須給自己打分數。</p><label class="field"><span>這次最卡的是哪裡？</span><select id="barrier"><option value="none">沒有特別卡住</option><option value="concept">不確定要用哪個程式觀念</option><option value="editor">知道怎麼做，但Scratch操作不熟</option><option value="debug">程式會跑，但結果不正確</option><option value="scope">任務太多，來不及完成</option></select></label><label class="field"><span>你覺得這關難度如何？</span><select id="felt"><option value="just">剛剛好</option><option value="easy">有點簡單</option><option value="hard">有點困難</option></select></label><hr class="divider"><h3>反思：今天學到了什麼？</h3><div class="question"><div id="qText"></div><div id="answers" class="options"></div><p id="qFeedback" class="small"></p></div></div><aside class="panel"><h3>你的冒險教練 🧭</h3><div class="stat">本關已進行 <b class="timer" id="clock">00:00</b><span class="small muted" id="expected"></span></div><p id="coachMessage" class="small">你可以自己挑戰，也可以隨時求救。使用提示不會扣分！</p><div class="controls"><button id="hintBtn" class="ghost">💡 給我一點線索</button><button id="later" class="subtle">我再想想</button></div><div id="hintBox" class="guide" style="display:none;margin-top:12px"></div><hr class="divider"><h3>💎 程式進化任務</h3><p id="optimize" class="small"></p><label class="task"><input type="checkbox" id="refactor"><span>我有嘗試讓程式更容易閱讀、重複利用或測試。</span></label><hr class="divider"><h3>相同能力的變化題</h3><p id="transfer" class="small"></p><label class="task"><input type="checkbox" id="transferDone"><span>我完成了變化題。</span></label><p class="small muted">變化題不必當天完成，也可以留到下一次。</p></aside></div></section>
-<section id="report" class="panel"><div class="eyebrow">學習冒險報告</div><h1 id="reportTitle"></h1><div class="row" id="reportStats"></div><p id="reportMsg" class="notice"></p><h3>本次學習診斷</h3><p id="diagnosis"></p><h3>下次任務的建議</h3><p id="recommendation"></p><div class="guide"><h3>下次暖身題</h3><p id="warmup"></p><p class="small muted">同能力、換故事，不用重新學整個觀念。</p></div><p class="small muted">這是以完成度、觀念題、提示、卡關原因及主觀難度進行的規則式診斷；尚非自動讀取 Scratch 程式、AI 分析、官方成績或 PR 常模。</p><div class="controls"><button class="primary" id="finish">返回地圖並保留紀錄</button><button class="ghost" id="export2">匯出紀錄</button></div></section>
-<footer class="foot">本地優先原型｜無伺服器、資料僅留在目前瀏覽器、非臺中市官方測驗｜請勿將自評結果視為實際競賽得分。</footer></div>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Scratch 冒險學院｜30分鐘賽前特訓</title><style>
+:root{--ink:#22314a;--muted:#66758c;--brand:#355db9;--pale:#eaf0ff;--bg:#f5f7fc;--line:#dce4f1;--green:#167b63;--red:#c13c45;--amber:#b7791f}*{box-sizing:border-box}body{margin:0;font-family:system-ui,'Noto Sans TC',sans-serif;color:var(--ink);background:radial-gradient(circle at 0 0,#e6edff,transparent 40%),var(--bg)}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:10px 16px;font-weight:700}button:disabled{opacity:.5;cursor:not-allowed}.primary{background:var(--brand);color:#fff}.ghost{color:var(--brand);background:var(--pale)}.subtle{background:#edf1f7;color:var(--ink)}.app{max-width:1160px;margin:auto;padding:24px}header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}.brand{font-size:22px;font-weight:850}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--brand)}h1{font-size:clamp(24px,4vw,36px);line-height:1.3;margin:8px 0 12px}h2{font-size:21px;margin:0 0 10px}h3{font-size:17px;margin:0 0 10px}p{line-height:1.65}.muted{color:var(--muted)}.small{font-size:13px}.panel{border:1px solid var(--line);background:#fff;border-radius:22px;padding:22px;box-shadow:0 8px 30px #28385b08}.cols{display:grid;grid-template-columns:1.45fr 1fr;gap:18px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.avatar{border:2px solid var(--line);border-radius:18px;background:white;padding:10px;display:grid;place-items:center;gap:4px}.avatar strong{font-size:13px}.avatar span{font-size:34px}.avatar.on{border-color:#446ad8;background:#edf2ff}.field{display:block;margin:14px 0}.field span{display:block;margin-bottom:6px;font-weight:700}input,select{border:1px solid #cad5e5;border-radius:11px;padding:12px;width:100%;background:white}section{display:none}.chip{display:inline-block;padding:4px 10px;border-radius:99px;background:#edf2ff;color:#3153ad;font-size:12px;font-weight:800}.chip.ok{background:#e3f6ec;color:var(--green)}.chip.warn{background:#fff3dc;color:var(--amber)}.unit{border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;background:#fff}.unit.done{background:#f0fbf5;border-color:#bfe5d1}.unit.cur{border:2px solid var(--brand);background:#f6f8ff}.step{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:#f6f8fc;margin-top:6px}.step.ok{background:#e9f8f0}.stat{background:#f2f5fd;border-radius:14px;padding:12px;flex:1;min-width:100px}.stat b{font-size:21px;display:block}.bar{height:10px;background:#e6ecf6;border-radius:10px;overflow:hidden;flex:1;min-width:80px}.fill{height:100%;background:linear-gradient(90deg,#5da9df,#546bd0)}.skillrow{display:flex;align-items:center;gap:10px;margin:8px 0}.skillrow .nm{width:150px;font-weight:700;font-size:14px}.tasks{display:grid;gap:9px;margin:12px 0}.task{display:flex;gap:10px;align-items:start;background:#f7f9fd;padding:12px;border-radius:12px}.task input{width:auto;margin-top:5px;accent-color:#3b70c2}.layout{display:grid;grid-template-columns:1fr 320px;gap:20px}.guide{background:#f0f4ff;border-radius:14px;padding:14px}.code{background:#fffaf0;border:1px dashed #e2c98f;border-radius:12px;padding:12px;font-size:14px;line-height:1.8;white-space:pre-line}.clock{font-size:44px;font-weight:850;font-variant-numeric:tabular-nums;text-align:center}.clock.late{color:var(--red)}.notice{border-left:4px solid #65a78a;background:#eff9f4;border-radius:8px;padding:12px}.notice.warn{border-left-color:#e4a23b;background:#fff8e8}.divider{border:0;border-top:1px solid var(--line);margin:16px 0}.foot{text-align:center;font-size:12px;color:#77839a;padding:24px}.controls{display:flex;gap:8px;flex-wrap:wrap}.link{color:var(--brand)}.plan li{margin:4px 0}.ext{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.ext button{text-align:left;background:#f7f9fd;color:var(--ink);font-weight:600;border:1px solid var(--line)}.ext button.done{background:#f0fbf5}
+@media(max-width:800px){.cols,.layout{grid-template-columns:1fr}.grid{grid-template-columns:repeat(3,1fr)}.app{padding:13px}.panel{padding:16px}.ext{grid-template-columns:1fr}.skillrow .nm{width:110px}}
+</style></head><body><div class="app"><header><div class="brand">🚀 Scratch 冒險學院 <span class="chip">30分鐘賽前特訓 v0.4</span></div><div id="who" class="muted small"></div></header>
+
+<section id="login" class="panel"><div class="eyebrow">建立你的冒險檔案</div><h1>5 小時，練熟比賽最常用的 5 招！</h1><p class="muted">不需要密碼。資料只存在這台電腦的瀏覽器裡。</p><label class="field"><span>姓名／暱稱</span><input id="name" maxlength="24" placeholder="例如：小小程式家" autocomplete="off"></label><label class="field"><span>帳號代號（英文、數字、底線，3–25字）</span><input id="account" maxlength="25" placeholder="例如：coder01" autocomplete="off"></label><h3>選一位冒險夥伴</h3><div id="avatars" class="grid"></div><div id="loginError" class="small" style="color:var(--red);margin:10px 0"></div><div class="controls"><button class="primary" id="start">進入冒險學院 →</button><label class="ghost" style="border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer">匯入紀錄 JSON<input type="file" id="importFile" accept=".json" style="display:none"></label></div><div id="profiles" style="margin-top:16px"></div></section>
+
+<section id="home"><div class="cols"><div class="panel"><div class="eyebrow">核心特訓：5 小時 ＝ 5 次 × 60 分鐘</div><h1 id="greeting"></h1><div id="resume"></div><p class="muted small">比賽只有 30 分鐘，所以每個練習都是<b>限時短練</b>。同一招會換不同題目反覆做，直到「不看範例、在時間內做完」為止。</p><div class="row" id="stats"></div><div id="units"></div></div>
+<div><div class="panel"><h2>5 招熟練度</h2><p class="small muted">★ = 不看範例、在時限內完成一題。每招拿到 2★ 就算練熟。</p><div id="skills"></div></div>
+<div class="panel" style="margin-top:18px"><h2>30 分鐘比賽時間分配</h2><ol class="plan small"><li><b>0–3 分</b>：讀題，寫下「玩家做什麼、怎麼得分、怎麼結束」</li><li><b>3–18 分</b>：先做出<b>能玩的最小版本</b>（操控＋得分）</li><li><b>18–24 分</b>：加計時／生命、開始與結束畫面</li><li><b>24–28 分</b>：按兩次綠旗測試，修正重置問題</li><li><b>28–30 分</b>：<b>存檔！</b>（檔案 → 儲存到你的電腦）</li></ol><p class="small muted">口訣：先能玩，再好玩，最後一定要存檔。</p></div>
+<div class="panel" style="margin-top:18px"><h3>紀錄與設定</h3><div class="controls"><button id="export" class="ghost">匯出紀錄 JSON</button><button id="switch" class="subtle">切換學員</button></div><p class="small muted">清除瀏覽器資料或用無痕模式會讓紀錄消失，請定期匯出。換電腦時在登入頁「匯入」。</p><p class="small muted">Scratch 編輯器：<a class="link" href="https://scratch.mit.edu/projects/editor/" target="_blank" rel="noopener">開啟官方 Scratch ↗</a>（比賽若用離線版，平常也用離線版練習）</p></div></div></div>
+<div class="panel" style="margin-top:18px"><div class="eyebrow">延伸挑戰（選修）</div><h2>完成 5 小時後，有興趣再玩</h2><p class="small muted">較完整的主題作品，每關約 40 分鐘，不計入核心時數。</p><div id="ext" class="ext"></div></div></section>
+
+<section id="play"><div class="layout"><div class="panel"><div class="row between"><div><div class="eyebrow" id="pLabel"></div><h1 id="pTitle"></h1></div><button class="subtle" id="backHome">暫停，回地圖</button></div><p id="pStory"></p><div class="row" id="pChips"></div><hr class="divider"><h2>完成條件</h2><p class="small muted">在 Scratch 做出來並<b>實際測試過</b>才打勾。</p><div id="pTasks" class="tasks"></div><div id="sbBox" class="guide"><h3>🔎 作品檢查（建議）</h3><p class="small">做完後在 Scratch 按「檔案 → 下載到你的電腦」，再把 .sb3 選進來。順便練習存檔！</p><input type="file" id="sbFile" accept=".sb3"><p id="sbOut" class="small" style="white-space:pre-line;font-weight:600"></p></div><div class="row" style="margin-top:16px"><button id="scratch" class="ghost">開啟 Scratch 編輯器 ↗</button><button id="done" class="primary">完成，看結果</button></div></div>
+<aside class="panel"><div class="eyebrow" id="clockLabel">剩餘時間</div><div class="clock" id="clock">10:00</div><p class="small muted" id="clockNote" style="text-align:center"></p><hr class="divider"><div id="patternWrap"><h3>📘 標準寫法</h3><p class="small muted">先自己試。真的卡住再看，看了這次就不算 ★（可以再練一題拿回來）。</p><button class="ghost" id="showPattern">我卡住了，看標準寫法</button><div id="pattern" class="code" style="display:none;margin-top:10px"></div></div><div id="mockTips" class="small"></div></aside></div></section>
+
+<section id="report" class="panel"><div class="eyebrow">練習結果</div><h1 id="rTitle"></h1><div class="row" id="rStats"></div><p id="rMsg" class="notice" style="margin-top:14px"></p><h3>下一步</h3><p id="rNext"></p><div class="controls"><button class="primary" id="rGo">繼續下一個練習 →</button><button class="subtle" id="rHome">回地圖</button><button class="ghost" id="rRetry">同一招再練一題</button></div></section>
+
+<footer class="foot">本地優先原型｜資料只留在目前瀏覽器｜非官方測驗，自評結果不代表實際競賽得分。</footer></div>
 <script>
 'use strict';
 const AV=[['🐱','小貓'],['🐶','小狗'],['🦸','超人'],['🌱','花苗精靈'],['🐷','小豬'],['🤖','機器人']];
-const LV=[
-{t:'太空船失控',star:2,skill:'事件、座標、迴圈',story:'太空船的方向盤失靈了！請讓船長重新控制飛船，躲開隕石並安全回航。',tasks:['方向鍵可以控制飛船上下左右移動','飛船不會移出遊戲畫面','碰到隕石時有明確反應'],bonus:'設計分數或三條生命，並在遊戲結束時顯示結果。',hints:['先確認你想讓哪個事件觸發移動。','試試「當按下某個鍵」或持續偵測按鍵。','使用「重複無限次」搭配「如果按鍵被按下」，再檢查座標邊界。'],opt:'方向鍵是否有四段幾乎相同的程式？想想能否用一致的結構讓修改比較容易。',transfer:'把太空船換成海底潛水艇，保持同樣的操作能力並避開水母。',q:'角色要一直檢查玩家是否按下方向鍵，最適合哪種做法？',a:['只在綠旗被點時檢查一次','在迴圈內持續檢查按鍵','停止所有程式'],ok:1},
-{t:'幸運抽獎王',star:2,skill:'變數、亂數、條件',story:'冒險村正在舉辦抽獎！要幫村民設計公平的抽籤機。',tasks:['按下抽獎鍵會出現指定範圍內的亂數','畫面會顯示抽到的號碼','程式能防止抽到範圍外的數字'],bonus:'加入不重複抽取的名單，直到號碼用完。',hints:['先把抽出的號碼放進一個地方保存。','你可以用「變數」搭配「隨機選一個數」。','將「抽中號碼」設為隨機1到20，再用角色說出變數內容。'],opt:'抽獎範圍若改成100，需要修改幾個位置？能否集中設定？',transfer:'製作「今天吃什麼」隨機餐點選擇器。',q:'想保存上次抽中的號碼，應優先使用？',a:['變數','造型','音效'],ok:0},
-{t:'自動駕駛計程車',star:4,skill:'條件、感測、演算法',story:'城市道路突然施工！幫無人計程車讀取障礙並安全前進。',tasks:['車輛能依照規則持續行駛','遇到障礙會停止或轉向','抵達目的地時顯示任務完成'],bonus:'加入兩種導航策略，觀察哪一種比較穩定。',hints:['先決定「遇到障礙」這件事怎麼被判斷。','使用碰到顏色或碰到角色的條件。','在移動迴圈中加入「如果碰到障礙，就轉向」的規則。'],opt:'把「行駛一次」的行為整理成自訂積木，方便下次更換車輛。',transfer:'改成農場送貨機器人，利用相同方式避開柵欄。',q:'如果車輛需要遇到牆就轉彎，核心應使用？',a:['隨機音效','條件判斷與碰撞感測','只換背景'],ok:1},
-{t:'打地鼠大賽',star:2,skill:'事件、計時、分身',story:'地鼠們開始偷偷探頭！在限定時間內挑戰你的反應。',tasks:['地鼠會出現在不同位置','玩家點到地鼠會加分','計時結束後遊戲會停止'],bonus:'加入連擊獎勵以及不同速度。',hints:['先把「點擊地鼠」和「地鼠出現」分成兩件事。','用亂數決定位置，用變數記錄分數。','地鼠重複顯示與隱藏，點擊角色時改變分數，另以計時變數控制結束。'],opt:'地鼠是否需要複製很多角色？試試分身概念。',transfer:'製作打泡泡遊戲，點到泡泡得分。',q:'哪一個項目最適合儲存玩家分數？',a:['背景','變數','造型'],ok:1},
-{t:'智慧販賣機',star:4,skill:'變數、廣播、狀態',story:'學校福利社需要一台不會算錯錢的販賣機！',tasks:['可以選擇商品並顯示價格','支付足夠金額後能完成購買','金額不足時會提醒且不出貨'],bonus:'加入庫存和找零功能。',hints:['先列出商品價格、投入金額與庫存。','用變數保存金額，再比較「投入金額≥價格」。','按下購買後用條件判斷是否足夠，成功後廣播出貨訊息。'],opt:'相同的購買邏輯是不是被複製很多次？可否整理成共用程序？',transfer:'改成遊樂園購票機，依票種處理付款。',q:'不同角色需要收到「交易成功」的訊息，適合？',a:['廣播','畫筆','只移動角色'],ok:0},
-{t:'怪獸保衛戰',star:3,skill:'碰撞、分身、狀態',story:'怪獸逼近基地！建立防線守住村莊。',tasks:['怪獸可以持續出現與移動','玩家可以進行攻擊','攻擊命中怪獸時會產生明確結果'],bonus:'加入生命值與遊戲重新開始的按鈕。',hints:['怪獸與子彈最好分成不同角色。','想想碰撞偵測後要改變哪個變數或刪除哪個分身。','分身出現後移動；碰到子彈時刪除分身並增加分數。'],opt:'多隻怪獸可否使用同一角色的分身產生？',transfer:'改成垃圾回收遊戲，接到可回收物加分。',q:'很多行為相似的怪獸應優先考慮？',a:['一直複製新角色','分身','只換背景'],ok:1},
-{t:'記憶挑戰王',star:3,skill:'串列、亂數、比較',story:'記憶寶庫的門被鎖住了！用問題和答案解開密碼。',tasks:['至少有三道題目可供作答','系統能判斷正確或錯誤','顯示答對題數'],bonus:'使用串列隨機出題且避免重複。',hints:['先想辦法保存問題與答案的對應關係。','試試兩個串列：題目和答案，使用相同索引。','隨機抽一個索引，讀取題目串列與答案串列同一位置。'],opt:'題庫要增加20題時，是否能只修改資料而不用增加20套積木？',transfer:'做一個英文單字小測驗，使用相同的資料與判定方式。',q:'要保存很多筆題目供程式依序或隨機讀取，適合？',a:['串列','造型','音量'],ok:0},
-{t:'程式故障修復員',star:4,skill:'除錯、測試、邊界',story:'城堡的機關程式壞了！你是最後一位修復工程師。',tasks:['找出一個會造成錯誤的條件','修正後可正常運作','至少測試兩種不同輸入'],bonus:'設計一個特殊測試，找出極端情況的Bug。',hints:['先說出「預期結果」和「實際結果」有哪裡不同。','檢查條件判斷順序、初始化與迴圈是否會停下來。','一次只修改一個部分，再重新執行同一組測試。'],opt:'把重複的測試步驟整理成固定清單，減少漏掉條件。',transfer:'幫抽獎機修正「抽到0」或「抽到重複號碼」的錯誤。',q:'除錯時最可靠的第一步通常是？',a:['同時改所有積木','先重現錯誤並確認預期結果','完全刪除專案'],ok:1},
-{t:'智慧交通控制中心',star:5,skill:'廣播、流程、協作',story:'交通號誌失去同步！打造不讓行人和汽車衝突的十字路口。',tasks:['紅黃綠燈依規則輪流切換','車子在紅燈時會停止','行人與車輛不會同時獲得通行指示'],bonus:'加入行人按鈕，讓燈號在安全時機回應。',hints:['先畫出交通號誌可以處於哪些狀態。','讓所有角色依同一個狀態變數或廣播控制行為。','狀態依序切換：汽車綠燈→黃燈→全紅→行人綠燈→全紅，再回到開始。'],opt:'把每次燈號切換封裝成清晰模組，方便修改不同等待時間。',transfer:'改成單軌列車平交道，控制警示燈和柵欄。',q:'避免兩個角色同時做出互相矛盾的動作，最需要？',a:['讓所有角色隨機決定','共同狀態或明確的事件協調','更多造型'],ok:1},
-{t:'神祕競賽任務',star:4,skill:'需求、整合、測試',story:'冒險之門打開了！請製作一個改善生活的小工具。',tasks:['明確寫出要解決的生活問題','完成至少一個可操作的核心功能','讓其他人可以讀懂如何使用作品'],bonus:'加入創意功能及簡短的流程設計說明。',hints:['先別急著拖積木：用一句話說清楚使用者需要什麼。','把問題拆成「輸入→判斷→輸出」三部分。','先完成最小功能，再測試兩種正常情境與一種例外情境。'],opt:'檢查命名、重複程式、未使用積木與說明文件是否易懂。',transfer:'如果原題是日常提醒工具，試著改成運動喝水提醒工具。',q:'遇到全新題目時，通常應該先做哪件事？',a:['挑選音效','拆解需求與功能','直接加入很多角色'],ok:1}
+/* ===== 5 個核心技術：每招 3 題變化題，反覆練 ===== */
+const SK=[
+{id:'move',name:'① 鍵盤操控＋邊界',why:'幾乎每個比賽作品都要讓玩家控制角色。',
+ pattern:`當綠旗被點擊
+  定位到 x:0 y:-120
+  重複無限次
+    如果 <右鍵被按下?> 那麼 → x 改變 10
+    如果 <左鍵被按下?> 那麼 → x 改變 -10
+    如果 <(x座標) > 220> 那麼 → x 設為 220
+    如果 <(x座標) < -220> 那麼 → x 設為 -220`,
+ need:[['sensing_keypressed','event_whenkeypressed','sensing_mousex'],['motion_changexby','motion_changeyby','motion_setx','motion_gotoxy']],
+ drills:[
+  {t:'左右走的小貓',min:8,story:'讓小貓用方向鍵左右移動，按綠旗回到起點。',tasks:['按右鍵往右、左鍵往左','按綠旗會回到同一個起點','動作順暢，不是按一下才走一步']},
+  {t:'不會飛出去的太空船',min:10,story:'太空船上下左右四個方向都能動，但不能飛出畫面。',tasks:['四個方向鍵都能控制','往任何方向都不會移出畫面','按綠旗回到畫面中央']},
+  {t:'跟著滑鼠的籃子',min:8,story:'籃子只在畫面底部左右移動，位置跟著滑鼠。',tasks:['籃子的 x 跟著滑鼠 x','籃子的 y 固定在底部','籃子不會超出左右邊界']}]},
+{id:'var',name:'② 變數：分數＋倒數',why:'比賽評分常看「有沒有計分、有沒有結束條件」。',
+ pattern:`當綠旗被點擊
+  變數 分數 設為 0
+  變數 時間 設為 30
+  重複直到 <(時間) = 0>
+    等待 1 秒
+    變數 時間 改變 -1
+  停止 全部   （或：廣播 遊戲結束）`,
+ need:[['data_setvariableto'],['data_changevariableby']],
+ drills:[
+  {t:'點我加分',min:8,story:'點一下角色就加 1 分。',tasks:['有「分數」變數並顯示在舞台','按綠旗分數歸零','點擊角色分數 +1']},
+  {t:'30 秒倒數',min:10,story:'做一個從 30 倒數到 0 的計時器，時間到遊戲停止。',tasks:['有「時間」變數並顯示','每秒減 1，從 30 開始','到 0 時遊戲停止或顯示時間到']},
+  {t:'三條命',min:10,story:'玩家有 3 條命，按空白鍵代表受傷一次。',tasks:['按綠旗生命設為 3','按空白鍵生命 -1','生命變 0 時說「Game Over」並停止']}]},
+{id:'touch',name:'③ 條件＋碰撞',why:'「碰到 → 加分／扣命」是比賽遊戲的核心規則。',
+ pattern:`（寫在主角或道具裡）
+重複無限次
+  如果 <碰到 [金幣]?> 那麼
+    變數 分數 改變 1
+    （讓金幣）移到 隨機位置
+    等待 0.2 秒   ← 避免一次加好多分`,
+ need:[['sensing_touchingobject','sensing_touchingcolor','sensing_coloristouchingcolor'],['control_if','control_if_else','control_wait_until']],
+ drills:[
+  {t:'吃金幣',min:10,story:'用方向鍵控制角色去吃金幣，吃到金幣換位置。',tasks:['碰到金幣分數 +1','金幣被吃後移到別的位置','碰一次只加 1 分，不會狂加']},
+  {t:'小心怪物',min:10,story:'碰到怪物會扣一條命，命沒了遊戲結束。',tasks:['碰到怪物生命 -1','扣命後角色退回起點（不會連續扣）','生命 0 時遊戲結束']},
+  {t:'迷宮走廊',min:10,story:'碰到黑色牆壁要退回去，碰到綠色終點就過關。',tasks:['碰到牆壁顏色會被擋住或退回','碰到終點顏色說「過關！」','按綠旗回到起點']}]},
+{id:'clone',name:'④ 亂數＋分身',why:'掉落物、敵人、障礙物都靠分身大量產生。',
+ pattern:`當綠旗被點擊
+  隱藏
+  重複無限次
+    建立 [自己] 的分身
+    等待 (隨機取數 0.5 到 1.5) 秒
+
+當分身產生
+  定位到 x:(隨機取數 -220 到 220) y:180
+  顯示
+  重複直到 <(y座標) < -170>
+    y 改變 -5
+  刪除這個分身`,
+ need:[['control_create_clone_of'],['control_start_as_clone'],['operator_random']],
+ drills:[
+  {t:'亂跑的蝴蝶',min:8,story:'蝴蝶每秒跳到一個隨機位置。',tasks:['用「隨機取數」決定位置','每秒換一次位置','不會跑出畫面']},
+  {t:'下蘋果雨',min:10,story:'蘋果從天空隨機位置一直掉下來。',tasks:['用分身產生很多蘋果','從上方隨機 x 掉下','掉到底會刪除分身']},
+  {t:'接蘋果',min:12,story:'結合 ①③④：籃子接住掉下的蘋果就加分。',tasks:['蘋果用分身一直掉','籃子接到加 1 分','接到的蘋果會消失（刪除分身）']}]},
+{id:'flow',name:'⑤ 廣播：開始／結束／重置',why:'有開始和結束畫面、重玩不出錯，作品才完整。',
+ pattern:`【舞台】當綠旗被點擊
+  換成背景 [開始畫面]
+  分數設為 0、時間設為 30
+【開始按鈕】當角色被點擊
+  隱藏
+  廣播 [開始遊戲]
+【各角色】當收到 [開始遊戲] → 顯示、開始動作
+【計時】時間到 → 廣播 [遊戲結束]
+【舞台】當收到 [遊戲結束]
+  換成背景 [結束畫面]
+  停止 全部`,
+ need:[['event_broadcast','event_broadcastandwait'],['event_whenbroadcastreceived']],
+ drills:[
+  {t:'按下開始',min:8,story:'畫面先出現「開始」按鈕，點了遊戲才開始。',tasks:['綠旗後只看到開始按鈕','點按鈕後按鈕消失','其他角色收到廣播才出現並開始']},
+  {t:'時間到了',min:10,story:'倒數結束後切換到結束畫面並顯示分數。',tasks:['時間到會廣播「遊戲結束」','換成結束背景，畫面看得到分數','所有角色都停止']},
+  {t:'重玩不出錯',min:10,story:'拿一個做好的小遊戲，連按兩次綠旗，要跟第一次玩一模一樣。',tasks:['分數、時間、生命都會重置','角色位置、造型、顯示/隱藏都重置','上一局的分身不會殘留']}]}
 ];
-const $=id=>document.getElementById(id); const KEY='scratch-quest-profiles-v1'; let profiles={},current=null,chosen=0,level=0,started=null,elapsed=0,hintLevel=0,quizChoice=-1,tick=null,reminded=false;
-function load(){try{profiles=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{profiles={}}}function save(){localStorage.setItem(KEY,JSON.stringify(profiles))}function show(s){['login','home','play','report'].forEach(x=>$(x).style.display=x===s?'block':'none');window.scrollTo(0,0)}function avatarPick(i){chosen=i;renderAvatars()}function renderAvatars(){$('avatars').innerHTML=AV.map(([e,n],i)=>`<button type="button" class="avatar ${chosen===i?'on':''}" data-av="${i}"><span>${e}</span><strong>${n}</strong></button>`).join('');document.querySelectorAll('[data-av]').forEach(b=>b.onclick=()=>avatarPick(+b.dataset.av))}
-function login(){load();renderAvatars();const ids=Object.keys(profiles);$('profiles').innerHTML=ids.length?'<h3>已有本機學員</h3>'+ids.map(id=>`<button class="ghost" style="margin:3px" data-profile="${id}">${AV[profiles[id].avatar][0]} ${escapeHtml(profiles[id].name)}</button>`).join(''):'';document.querySelectorAll('[data-profile]').forEach(b=>b.onclick=()=>enter(b.dataset.profile));show('login')}
-function escapeHtml(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-$('start').onclick=()=>{let id=$('account').value.trim(),name=$('name').value.trim();if(!name||!/^[a-zA-Z0-9_]{3,25}$/.test(id)){$('loginError').textContent='請輸入姓名，帳號代號須為3–25位英文、數字或底線。';return}if(profiles[id]){$('loginError').textContent='這個代號已使用，請點選下方已有學員或換一個代號。';return}profiles[id]={name,avatar:chosen,sessions:[],recommended:0,created:new Date().toISOString()};save();enter(id)};
-function enter(id){current=id;$('who').textContent=AV[profiles[id].avatar][0]+' '+profiles[id].name;home()}
-function getP(){return profiles[current]}function doneCount(){return new Set(getP().sessions.filter(s=>s.completion>=.67).map(s=>s.level)).size}
-function home(){clearInterval(tick);const p=getP();$('greeting').textContent=`${AV[p.avatar][0]} ${p.name}，出發吧！`;$('nextNote').textContent=p.sessions.length?`上次冒險：${LV[p.sessions[p.sessions.length-1].level].t}。推薦下次挑戰：LV.${p.recommended+1} ${LV[p.recommended].t}。`:'先做第一級暖身挑戰；想從不同關卡開始也可以。';$('stats').innerHTML=`<div class="stat"><b>${p.sessions.length}</b><span class="small">累計練習次數</span></div><div class="stat"><b>${doneCount()}/10</b><span class="small">通過的主線關卡</span></div><div class="stat"><b>${p.sessions.reduce((a,s)=>a+s.minutes,0)}分</b><span class="small">累積記錄時間</span></div>`;$('levels').innerHTML=LV.map((x,i)=>`<button class="level ${p.sessions.some(s=>s.level===i&&s.completion>=.67)?'done':''} ${level===i?'selected':''}" data-level="${i}"><div class="chip">LV.${i+1}　${'★'.repeat(x.star)}</div><div class="level-title">${x.t}</div><small>${x.skill}</small></button>`).join('');document.querySelectorAll('[data-level]').forEach(b=>b.onclick=()=>{level=+b.dataset.level;home()});$('detail').innerHTML=`<div class="chip">LV.${level+1}</div><h2 style="margin-top:10px">${LV[level].t}</h2><p>${LV[level].story}</p><p class="muted small">目標：${LV[level].skill}</p><button class="primary" id="launch">開始這一關 →</button>`;$('launch').onclick=play;show('home')}
-$('switch').onclick=login;$('export').onclick=exportRecord;$('export2').onclick=exportRecord;
-function exportRecord(){const p=getP(),blob=new Blob([JSON.stringify({format:'scratch-quest-v1',account:current,profile:p},null,2)],{type:'application/json'}),a=document.createElement('a');let url=URL.createObjectURL(blob);a.href=url;a.download=`scratch-quest-${current}-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-function play(){const L=LV[level];started=Date.now();elapsed=0;hintLevel=0;quizChoice=-1;reminded=false;$('lvlLabel').textContent=`LV.${level+1}｜闖關中`;$('missionTitle').textContent=L.t;$('story').textContent=L.story;$('skills').textContent=L.skill;$('dif').textContent='難度 '+ '★'.repeat(L.star);$('taskList').innerHTML=L.tasks.map((t,i)=>`<label class="task"><input type="checkbox" data-task="${i}"><span>${t}</span></label>`).join('');$('bonus').textContent=L.bonus;$('optimize').textContent=L.opt;$('transfer').textContent=L.transfer;$('expected').textContent='約20分鐘後可考慮提示';$('coachMessage').textContent='不用急！要不要試試自己先拆解小步驟？使用提示不扣分。';$('hintBox').style.display='none';$('refactor').checked=false;$('transferDone').checked=false;$('barrier').value='none';$('felt').value='just';$('qText').textContent=L.q;$('answers').innerHTML=L.a.map((s,i)=>`<button class="option" data-answer="${i}">${String.fromCharCode(65+i)}. ${s}</button>`).join('');$('qFeedback').textContent='';document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>{quizChoice=+b.dataset.answer;document.querySelectorAll('[data-answer]').forEach(v=>v.classList.toggle('chosen',v===b));$('qFeedback').textContent=quizChoice===L.ok?'答對了！試著把這個想法用在程式裡。':'這也是一種嘗試，請再觀察題目需要的程式行為。'});show('play');clearInterval(tick);tick=setInterval(updateClock,1000);updateClock()}
-function updateClock(){elapsed=Math.floor((Date.now()-started)/1000);$('clock').textContent=String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0');if(elapsed>=20*60&&!reminded){reminded=true;$('coachMessage').textContent='🕵️ 冒險時間到20分鐘啦！如果卡在某個地方，要不要開啟小線索？不會扣分喔。'}}
-$('hintBtn').onclick=()=>{hintLevel=Math.min(3,hintLevel+1);$('hintBox').style.display='block';$('hintBox').innerHTML=`<b>線索 ${hintLevel}/3</b><p>${LV[level].hints[hintLevel-1]}</p>`};$('later').onclick=()=>{$('coachMessage').textContent='很好！先試試自己的想法，需要時我一直都在。'};
-$('scratch').onclick=()=>window.open('https://scratch.mit.edu/projects/editor/','_blank','noopener');$('backHome').onclick=()=>{if(confirm('要離開這次挑戰嗎？尚未結束的紀錄不會儲存。'))home()};
-// 個人化規則：用可觀察的學習訊號，不假裝這是真正的 PR 常模。
-function analyzeSession(s){
- const p=getP(), old=p.sessions.filter(x=>x.level===s.level).slice(0,-1);
- const complete=s.completion===1, understood=s.quizCorrect, independently=s.hints<=1;
- let mode='advance', reason='核心功能已達標，建議換一個故事繼續挑戰。';
- if(s.barrier==='editor') {mode='practice';reason='觀念不一定有問題，先用更短的任務熟悉積木操作。';}
- else if(s.barrier==='debug'){mode='debug';reason='下一次先做短版除錯與邊界測試，再接續主題。';}
- else if(s.completion<.67 || (s.barrier==='concept'&&!understood)){mode='review';reason='核心概念需要一個相近難度、但故事不同的練習。';}
- else if(!understood || s.hints>=2){mode='transfer';reason='主要功能已有進展，透過變化題確認能否獨立應用。';}
- else if(complete && understood && independently && s.felt==='easy'){mode='stretch';reason='完成度高且感覺容易，下一次可以多加一項進階挑戰。';}
- const changed=old.length&&s.completion>old[old.length-1].completion;
- const next=['review','transfer','practice','debug'].includes(mode)?s.level:Math.min(9,s.level+1);
- return {mode,next,reason,changed,focus:LV[s.level].skill,warmup:LV[s.level].transfer};
-}
-$('done').onclick=()=>{
- clearInterval(tick);
- let checked=[...document.querySelectorAll('[data-task]')].filter(x=>x.checked).length;
- let completion=checked/LV[level].tasks.length, minutes=Math.max(1,Math.ceil(elapsed/60));
- const s={level,date:new Date().toISOString(),minutes,completion,completed:checked,total:LV[level].tasks.length,hints:hintLevel,quizCorrect:quizChoice===LV[level].ok,quizAnswered:quizChoice>=0,refactored:$('refactor').checked,transfer:$('transferDone').checked,barrier:$('barrier').value,felt:$('felt').value};
- getP().sessions.push(s);s.adaptation=analyzeSession(s);getP().recommended=s.adaptation.next;save();report(s);
-};
-function report(s){
- const a=s.adaptation || analyzeSession(s);
- $('reportTitle').textContent=s.completion>=.67?'⭐ 任務完成，太棒了！':'🌱 今天又前進了一步！';
- $('reportStats').innerHTML=`<div class="stat"><b>${Math.round(s.completion*100)}%</b><span class="small">自行勾選完成率</span></div><div class="stat"><b>${s.minutes}分</b><span class="small">本次時間</span></div><div class="stat"><b>${s.hints}</b><span class="small">看過的提示層數</span></div>`;
- $('reportMsg').textContent=a.changed?'和上次同關相比，你的功能完成率提高了！':s.transfer?'你把學過的觀念用在不同故事裡，這是很重要的能力！':s.refactored?'你願意改善程式結構，讓作品更容易維護！':s.hints?'能運用提示繼續嘗試，也是解決問題的能力。':'你又完成了一次挑戰！';
- $('diagnosis').textContent=`能力觀察：${a.focus}。本次最主要的訊號：${s.barrier==='none'?'沒有自述卡關':{concept:'觀念選擇',editor:'編輯器操作',debug:'程式除錯',scope:'時間與任務拆解'}[s.barrier]}；觀念題${s.quizAnswered?(s.quizCorrect?'答對':'需複習'):'尚未作答'}；${s.transfer?'已嘗試變化題':'變化題可留到下次'}。`;
- $('recommendation').textContent=`${a.reason} 建議下一級：LV.${a.next+1}「${LV[a.next].t}」。這是可調整的建議，不是強制升級。`;
- $('warmup').textContent=a.warmup;
- show('report');
-}
-$('finish').onclick=()=>{level=getP().recommended;home()};load();login();
-</script><script>
-/* v0.3：在瀏覽器內讀取 Scratch 作品，不傳送檔案。 */
-let inspected=null;
-const panel=document.createElement('div');panel.className='guide';panel.style.margin='16px 0';
-panel.innerHTML='<h3>🔎 作品健檢（測試版）｜v0.3.2</h3><p class="small">可選擇 .sb3 檔案分析程式結構。只在這台裝置處理，沒有上傳；無法自動證明題目功能正確。</p><input type="file" id="projectUpload" accept=".sb3"><p id="projectFindings" class="small muted">尚未分析作品。</p>';
-document.getElementById('done').parentElement.insertAdjacentElement('afterend',panel);document.getElementById('projectFindings').style.whiteSpace='pre-line';document.getElementById('projectFindings').style.fontWeight='600';
-async function inspectSb3(file){
- if(!/\.sb3$/i.test(file.name))throw Error('請選擇Scratch .sb3檔案');
- if(file.size>15e6)throw Error('檔案過大（目前上限15MB）');
- const ab=await file.arrayBuffer(),d=new DataView(ab),b=new Uint8Array(ab),td=new TextDecoder();
- let e=-1;for(let i=b.length-22;i>=Math.max(0,b.length-65557);--i)if(d.getUint32(i,true)===0x06054b50){e=i;break}
- if(e<0)throw Error('找不到ZIP結尾');
- let at=d.getUint32(e+16,true),n=d.getUint16(e+10,true),entry;
- for(let i=0;i<n;i++){
-  if(at+46>b.length||d.getUint32(at,true)!==0x02014b50)throw Error('ZIP目錄有誤');
-  const nameLen=d.getUint16(at+28,true),ex=d.getUint16(at+30,true),com=d.getUint16(at+32,true),name=td.decode(b.slice(at+46,at+46+nameLen));
-  if(name==='project.json'){entry={method:d.getUint16(at+10,true),size:d.getUint32(at+20,true),out:d.getUint32(at+24,true),offset:d.getUint32(at+42,true)};break}
-  at+=46+nameLen+ex+com;
- }
- if(!entry)throw Error('作品不含project.json');
- if(entry.out>5e6)throw Error('程式資料太大');
- let j=entry.offset;if(d.getUint32(j,true)!==0x04034b50)throw Error('ZIP資料有誤');
- let start=j+30+d.getUint16(j+26,true)+d.getUint16(j+28,true),raw=b.slice(start,start+entry.size);
- if(raw.length!==entry.size)throw Error('壓縮資料不完整');
- if(entry.method===8){
-  try {
-    raw=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
-  } catch(nativeErr) {
-    if(!window.fflate){
-      await new Promise((resolve,reject)=>{
-        const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js';
-        script.onload=resolve;script.onerror=()=>reject(Error('無法載入解壓縮工具，請確認網路連線'));document.head.appendChild(script);
-      });
-    }
-    raw=window.fflate.inflateSync(raw);
-  }
- }else if(entry.method!==0)throw Error('壓縮方式不支援');
- const p=JSON.parse(td.decode(raw));if(!Array.isArray(p.targets))throw Error('不是Scratch 3作品');
- let total=0,detached=0,repeat=0,loops=0,procedures=0,variables=0;
- for(const t of p.targets){
-  variables+=Object.keys(t.variables||{}).length;
-  const blocks=t.blocks||{},signatures=new Map();
-  for(const [id,x] of Object.entries(blocks)){
-   if(!x?.opcode)continue;total++;
-   if(x.topLevel&&!x.next&&!x.opcode.startsWith('event_')&&x.opcode!=='procedures_definition')detached++;
-   if(['control_repeat','control_forever','control_repeat_until'].includes(x.opcode))loops++;
-   if(x.opcode==='procedures_definition')procedures++;
-   if(x.topLevel&&x.next){let curr=id,chain=[],seen=new Set();while(curr&&!seen.has(curr)&&chain.length<8){seen.add(curr);const v=blocks[curr];if(!v?.opcode)break;chain.push(v.opcode);curr=v.next}
-    if(chain.length>=4){const k=chain.join('/');signatures.set(k,(signatures.get(k)||0)+1)}
-   }
-  }
-  for(const v of signatures.values())if(v>1)repeat+=v-1;
- }
- if(!total)throw Error('沒有偵測到程式積木');
- const suggestions=[];
- if(detached)suggestions.push('有'+detached+'個單獨存在的非事件積木；可檢查是否為測試時留下的。');
- if(repeat)suggestions.push('有'+repeat+'組開頭相似的程式，可看看是否值得合併。');
- if(total>40&&!procedures)suggestions.push('作品較大，考慮使用自訂積木整理可重用的動作。');
- if(!suggestions.length)suggestions.push('尚未找到常見的結構改善線索；仍需實際操作測試。');
- return {total,detached,repeat,loops,procedures,variables,suggestions};
-}
-document.getElementById('projectUpload').onchange=async(e)=>{
- inspected=null;const output=document.getElementById('projectFindings'),file=e.target.files?.[0];if(!file)return;output.textContent='正在檢查…';
- try{inspected=await inspectSb3(file);output.textContent='✅ 結構分析完成：'+inspected.total+'個程式積木、'+inspected.loops+'個迴圈、'+inspected.procedures+'個自訂積木、'+inspected.variables+'個變數。\n改善建議：'+inspected.suggestions.join(' ')}
- catch(err){output.textContent='⚠️ 無法讀取作品：'+err.message}
-};
-document.addEventListener('click',e=>{if(e.target?.id==='launch'){inspected=null;document.getElementById('projectUpload').value='';document.getElementById('projectFindings').textContent='尚未分析作品。'}},true);
-const previousDone=document.getElementById('done').onclick;
-document.getElementById('done').onclick=()=>{
- previousDone();if(!inspected)return;
- const p=getP(),s=p.sessions[p.sessions.length-1];s.codeAnalysis=inspected;
- if(inspected.detached||inspected.repeat)s.adaptation.warmup='程式進化練習：找一段可能多餘或重複的積木，調整後確認原功能仍能使用。';
- save();report(s);
- const detail=document.createElement('p');detail.className='notice';detail.textContent='🔎 作品健檢：'+inspected.suggestions.join(' ');
- document.getElementById('diagnosis').insertAdjacentElement('afterend',detail);
-};
+/* ===== 模擬賽題庫（30 分鐘、現場陌生題目） ===== */
+const MOCK=[
+ {t:'海底撿珍珠',story:'潛水員在海底撿珍珠，要躲開水母。'},
+ {t:'垃圾分類小幫手',story:'垃圾從天上掉下來，用正確的桶子接住。'},
+ {t:'小雞過馬路',story:'小雞要穿過一直有車經過的馬路回家。'},
+ {t:'太空躲隕石',story:'太空船躲開不斷飛來的隕石，撐越久越好。'},
+ {t:'接水果大賽',story:'水果和炸彈一起掉下，接水果、躲炸彈。'},
+ {t:'森林收集橡果',story:'松鼠在森林收集橡果，要在冬天來臨前收滿。'}];
+const RUBRIC=[['玩家可以用鍵盤或滑鼠操控主角','move'],['有得分規則，分數會顯示','var'],['有碰撞規則（加分或扣命）','touch'],['有多個會動的物件（分身或多角色）','clone'],['有結束條件（時間到或沒命）並顯示結果','var'],['按兩次綠旗都能正常重新開始','flow'],['已存成 .sb3 檔','save']];
+/* ===== 5 小時課表：每次 60 分鐘 ===== */
+const PLAN=[
+ {t:'第 1 次：操控與計分',items:[['d','move',0],['d','move',1],['d','move',2],['d','var',0],['d','var',1],['d','var',2]]},
+ {t:'第 2 次：碰撞與分身',items:[['d','touch',0],['d','touch',1],['d','touch',2],['d','clone',0],['d','clone',1],['d','clone',2]]},
+ {t:'第 3 次：完整流程＋第一次模擬賽',items:[['d','flow',0],['d','flow',1],['d','flow',2],['m',0]]},
+ {t:'第 4 次：弱點重練＋模擬賽',items:[['w'],['w'],['w'],['m',1]]},
+ {t:'第 5 次：弱點重練＋最終模擬賽',items:[['w'],['w'],['w'],['m',2]]}];
+/* ===== 延伸挑戰（原本 10 關精簡） ===== */
+const EXT=[
+ {t:'太空船失控',story:'讓船長控制飛船，躲開隕石並安全回航。',tasks:['方向鍵控制且不出界','隕石用分身不斷出現','碰到隕石扣命，有結束畫面']},
+ {t:'打地鼠大賽',story:'地鼠隨機探頭，限時內點越多越好。',tasks:['地鼠隨機位置出現又消失','點到加分','30 秒到遊戲停止並顯示分數']},
+ {t:'怪獸保衛戰',story:'按空白鍵發射子彈打怪獸。',tasks:['怪獸用分身持續出現','空白鍵發射子彈（分身）','子彈碰到怪獸雙方消失並加分']},
+ {t:'記憶問答王',story:'用串列做一個隨機出題的小測驗。',tasks:['題目和答案分別存在兩個串列','隨機出題並判斷對錯','顯示答對題數']},
+ {t:'智慧販賣機',story:'選商品、投錢、錢不夠就不出貨。',tasks:['顯示商品與價格','金額足夠才出貨並找零','金額不足會提醒']},
+ {t:'自動駕駛計程車',story:'車子沿路行駛，遇到障礙會轉向。',tasks:['車子持續前進','碰到障礙顏色會轉向','到達終點顯示完成']},
+ {t:'智慧交通號誌',story:'紅綠燈輪流切換，車和行人不衝突。',tasks:['燈號依序切換','紅燈時車子停下','行人與車不同時通行']},
+ {t:'程式除錯員',story:'把自己以前的作品連按兩次綠旗、亂按按鍵，找出 2 個 bug 並修好。',tasks:['寫下預期與實際結果','修好至少 2 個 bug','修完再測一次都正常']}];
+
+const $=id=>document.getElementById(id);const KEY='scratch-quest-profiles-v1';
+let profiles={},current=null,chosen=0,run=null,tick=null,inspected=null;
+function load(){try{profiles=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{profiles={}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(profiles))}catch(e){alert('無法儲存紀錄，請匯出備份')}}
+function show(s){['login','home','play','report'].forEach(x=>$(x).style.display=x===s?'block':'none');window.scrollTo(0,0)}
+function esc(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function P(){const p=profiles[current];p.sessions=p.sessions||[];p.slots=p.slots||{};return p}
+function fmt(s){const a=Math.abs(s);return(s<0?'+':'')+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0')}
+
+/* ---- 登入 ---- */
+function renderAvatars(){$('avatars').innerHTML=AV.map(([e,n],i)=>`<button type="button" class="avatar ${chosen===i?'on':''}" data-av="${i}"><span>${e}</span><strong>${n}</strong></button>`).join('');document.querySelectorAll('[data-av]').forEach(b=>b.onclick=()=>{chosen=+b.dataset.av;renderAvatars()})}
+function login(){clearInterval(tick);load();renderAvatars();const ids=Object.keys(profiles);$('profiles').innerHTML=ids.length?'<h3>已有學員</h3>'+ids.map(id=>`<button class="ghost" style="margin:3px" data-profile="${esc(id)}">${AV[profiles[id].avatar||0][0]} ${esc(profiles[id].name)}</button>`).join(''):'';document.querySelectorAll('[data-profile]').forEach(b=>b.onclick=()=>enter(b.dataset.profile));show('login')}
+$('start').onclick=()=>{const id=$('account').value.trim(),name=$('name').value.trim();if(!name||!/^[a-zA-Z0-9_]{3,25}$/.test(id)){$('loginError').textContent='請輸入姓名，帳號代號須為 3–25 位英文、數字或底線。';return}if(profiles[id]){$('loginError').textContent='這個代號已使用，請點下方已有學員或換一個。';return}profiles[id]={name,avatar:chosen,sessions:[],slots:{},created:new Date().toISOString()};save();enter(id)};
+$('importFile').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d.account||!d.profile||!/^[a-zA-Z0-9_]{3,25}$/.test(d.account))throw 0;if(profiles[d.account]&&!confirm('已有同代號學員，要用匯入的紀錄覆蓋嗎？'))return;profiles[d.account]=d.profile;save();login()}catch{$('loginError').textContent='匯入失敗：不是本網站匯出的紀錄檔。'}e.target.value=''};
+function enter(id){current=id;$('who').textContent=AV[P().avatar||0][0]+' '+P().name;home()}
+$('switch').onclick=login;$('export').onclick=()=>{const blob=new Blob([JSON.stringify({format:'scratch-quest-v2',account:current,profile:P()},null,2)],{type:'application/json'}),a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=`scratch-quest-${current}-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+
+/* ---- 熟練度與弱點 ---- */
+function stars(sk){return P().sessions.filter(s=>s.kind==='d'&&s.skill===sk&&s.star).length}
+function weakScore(sk){let w=Math.max(0,2-stars(sk))*2;const mocks=P().sessions.filter(s=>s.kind==='m');const last=mocks[mocks.length-1];if(last)last.missed.forEach(m=>{if(m===sk)w+=3});return w}
+function pickWeak(exclude){const ord=SK.map((s,i)=>({i,w:weakScore(s.id)})).sort((a,b)=>b.w-a.w||a.i-b.i);for(const o of ord){if(exclude.includes(SK[o.i].id)&&ord.length>1)continue;const sk=SK[o.i];const cnt=P().sessions.filter(s=>s.kind==='d'&&s.skill===sk.id).length;return[sk.id,cnt%3]}return[SK[0].id,0]}
+function slotItem(u,k){const it=PLAN[u].items[k];if(it[0]!=='w')return it;const key=u+'-'+k;const sl=P().slots[key];if(sl&&sl.pick)return['d',sl.pick[0],sl.pick[1]];return null}
+function slotDone(u,k){return !!(P().slots[u+'-'+k]||{}).done}
+function nextSlot(){for(let u=0;u<PLAN.length;u++)for(let k=0;k<PLAN[u].items.length;k++)if(!slotDone(u,k))return[u,k];return null}
+function itemLabel(it,u,k){if(!it)return'🔁 弱點重練（系統會選你最需要的那一招）';if(it[0]==='m')return`🏁 模擬賽 #${it[1]+1}（30 分鐘）`;const sk=SK.find(s=>s.id===it[1]);const d=sk.drills[it[2]];return`${sk.name.slice(0,1)} ${d.t}（${d.min} 分）`}
+
+/* ---- 首頁 ---- */
+function home(){clearInterval(tick);const p=P();$('greeting').textContent=`${AV[p.avatar||0][0]} ${p.name}，今天練哪一段？`;
+ const totalMin=p.sessions.reduce((a,s)=>a+s.minutes,0),done=PLAN.reduce((a,u,i)=>a+u.items.filter((_,k)=>slotDone(i,k)).length,0),all=PLAN.reduce((a,u)=>a+u.items.length,0),mocks=p.sessions.filter(s=>s.kind==='m');
+ $('stats').innerHTML=`<div class="stat"><b>${done}/${all}</b><span class="small">核心練習完成</span></div><div class="stat"><b>${totalMin} 分</b><span class="small">累積練習時間</span></div><div class="stat"><b>${mocks.length?mocks[mocks.length-1].score+'/'+RUBRIC.length:'—'}</b><span class="small">最近模擬賽得分</span></div>`;
+ $('resume').innerHTML=p.active?`<p class="notice warn">⏸ 你有一個暫停中的練習：<b>${esc(p.active.title)}</b>。<button class="primary" id="resumeBtn" style="margin-left:6px">繼續</button> <button class="subtle" id="dropBtn">放棄</button></p>`:'';
+ if(p.active){$('resumeBtn').onclick=()=>startRun(null,true);$('dropBtn').onclick=()=>{if(confirm('放棄這次練習？')){delete p.active;save();home()}}}
+ const nx=nextSlot();
+ $('units').innerHTML=PLAN.map((u,i)=>{const fin=u.items.every((_,k)=>slotDone(i,k)),cur=nx&&nx[0]===i;return`<div class="unit ${fin?'done':''} ${cur?'cur':''}"><div class="row between"><b>${u.t}</b><span class="chip ${fin?'ok':''}">${fin?'完成':u.items.filter((_,k)=>slotDone(i,k)).length+'/'+u.items.length}</span></div>${u.items.map((_,k)=>{const it=slotItem(i,k),ok=slotDone(i,k),isNext=nx&&nx[0]===i&&nx[1]===k;return`<div class="step ${ok?'ok':''}"><span class="small">${ok?'✅':isNext?'👉':'▫️'} ${itemLabel(it,i,k)}</span>${isNext||(!ok&&cur)?`<button class="${isNext?'primary':'subtle'}" data-slot="${i}-${k}" style="padding:6px 12px">${isNext?'開始':'先做這個'}</button>`:ok?`<button class="subtle" data-slot="${i}-${k}" style="padding:6px 12px">再練</button>`:''}</div>`}).join('')}</div>`}).join('')+(nx?'':'<p class="notice">🎉 5 小時核心特訓全部完成！可以再挑弱的那招重練，或往下玩延伸挑戰。</p>');
+ document.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{const[u,k]=b.dataset.slot.split('-').map(Number);openSlot(u,k)});
+ $('skills').innerHTML=SK.map(s=>{const n=stars(s.id);return`<div class="skillrow"><span class="nm">${s.name}</span><div class="bar"><div class="fill" style="width:${Math.min(100,n*50)}%"></div></div><span class="chip ${n>=2?'ok':n?'':'warn'}">${'★'.repeat(Math.min(n,2))||'—'}</span><button class="subtle" style="padding:5px 10px" data-skill="${s.id}">練</button></div>`}).join('');
+ document.querySelectorAll('[data-skill]').forEach(b=>b.onclick=()=>freeDrill(b.dataset.skill));
+ const ed=new Set(p.sessions.filter(s=>s.kind==='e'&&s.completion===1).map(s=>s.ref));
+ $('ext').innerHTML=EXT.map((e,i)=>`<button class="${ed.has(i)?'done':''}" data-ext="${i}">${ed.has(i)?'✅':'⭐'} ${e.t}</button>`).join('');
+ document.querySelectorAll('[data-ext]').forEach(b=>b.onclick=()=>startRun({kind:'e',ref:+b.dataset.ext}));
+ show('home')}
+function openSlot(u,k){const p=P(),key=u+'-'+k,raw=PLAN[u].items[k];let it=raw;if(raw[0]==='w'){const sl=p.slots[key]||{};if(!sl.pick){const used=PLAN[u].items.map((_,j)=>(p.slots[u+'-'+j]||{}).pick).filter(Boolean).map(x=>x[0]);sl.pick=pickWeak(used);p.slots[key]=sl;save()}it=['d',sl.pick[0],sl.pick[1]]}
+ if(it[0]==='m')startRun({kind:'m',ref:(P().sessions.filter(s=>s.kind==='m').length)%MOCK.length,slot:key});else startRun({kind:'d',skill:it[1],ref:it[2],slot:key})}
+function freeDrill(sk){const cnt=P().sessions.filter(s=>s.kind==='d'&&s.skill===sk).length;startRun({kind:'d',skill:sk,ref:cnt%3})}
+
+/* ---- 練習畫面 ---- */
+function startRun(spec,resume){const p=P();if(resume){run=p.active}else{if(p.active&&!confirm('你有暫停中的練習，要放棄它開始新的嗎？'))return;run={...spec,start:Date.now(),paused:0,checks:[],peek:false}}
+ inspected=null;$('sbFile').value='';$('sbOut').textContent='';let title,story,tasks,limit,chips=[];
+ if(run.kind==='d'){const sk=SK.find(s=>s.id===run.skill),d=sk.drills[run.ref];title=d.t;story=d.story;tasks=d.tasks;limit=d.min;$('pLabel').textContent=`技術短練｜${sk.name}`;chips=[`第 ${run.ref+1}/3 題`,`限時 ${d.min} 分`,sk.why];$('pattern').textContent=sk.pattern;$('patternWrap').style.display='block';$('mockTips').innerHTML=''}
+ else if(run.kind==='m'){const m=MOCK[run.ref];title='模擬賽：'+m.t;story=m.story+' 你有 30 分鐘，從空白專案開始做出一個可以玩的遊戲。';tasks=RUBRIC.map(r=>r[0]);limit=30;$('pLabel').textContent='🏁 30 分鐘模擬賽';chips=['不看範例','限時 30 分','跟比賽一樣'];$('patternWrap').style.display='none';$('mockTips').innerHTML='<h3>時間提醒</h3><p>系統會在 <b>3、18、24、28</b> 分鐘提醒你該做什麼。</p><p class="muted">卡住超過 3 分鐘：先跳過，做下一個功能。</p>'}
+ else{const e=EXT[run.ref];title=e.t;story=e.story;tasks=e.tasks;limit=40;$('pLabel').textContent='⭐ 延伸挑戰';chips=['選修','建議 40 分'];$('pattern').textContent='延伸挑戰沒有標準寫法，試著組合 5 招！';$('patternWrap').style.display='block';$('mockTips').innerHTML=''}
+ run.title=title;run.limit=limit*60;p.active=run;save();
+ $('pTitle').textContent=title;$('pStory').textContent=story;$('pChips').innerHTML=chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('');
+ $('pTasks').innerHTML=tasks.map((t,i)=>`<label class="task"><input type="checkbox" data-task="${i}" ${run.checks.includes(i)?'checked':''}><span>${esc(t)}</span></label>`).join('');
+ document.querySelectorAll('[data-task]').forEach(c=>c.onchange=()=>{run.checks=[...document.querySelectorAll('[data-task]')].filter(x=>x.checked).map(x=>+x.dataset.task);save()});
+ $('pattern').style.display=run.peek?'block':'none';$('showPattern').style.display=run.peek?'none':'inline-block';
+ show('play');clearInterval(tick);run.alerted=run.alerted||[];tick=setInterval(updateClock,1000);updateClock()}
+function used(){return Math.floor((Date.now()-run.start-run.paused)/1000)}
+function updateClock(){const left=run.limit-used();$('clock').textContent=left>=0?fmt(left):fmt(left);$('clock').classList.toggle('late',left<0);
+ $('clockLabel').textContent=left>=0?'剩餘時間':'已超時';
+ if(run.kind==='m'){const m=Math.floor(used()/60),tips={3:'⏱ 3 分鐘：題目讀懂了嗎？開始做「操控＋得分」！',18:'⏱ 18 分鐘：加上計時／生命和結束畫面。',24:'⏱ 24 分鐘：停止加新功能，按兩次綠旗測試！',28:'⏱ 28 分鐘：馬上存檔！檔案 → 下載到你的電腦。'};for(const t in tips)if(m>=+t&&!run.alerted.includes(+t)){run.alerted.push(+t);$('clockNote').textContent=tips[t]}}
+ else $('clockNote').textContent=left>=0?'在時間內、不看範例完成 → 拿 ★':'超時也沒關係，做完再換下一題！'}
+$('showPattern').onclick=()=>{run.peek=true;save();$('pattern').style.display='block';$('showPattern').style.display='none'};
+$('scratch').onclick=()=>window.open('https://scratch.mit.edu/projects/editor/','_blank','noopener');
+$('backHome').onclick=()=>{run.pausedAt=Date.now();save();clearInterval(tick);home()};
+/* 暫停時間不計入 */
+const _start=startRun;startRun=function(spec,resume){if(resume&&P().active&&P().active.pausedAt){P().active.paused+=Date.now()-P().active.pausedAt;delete P().active.pausedAt}_start(spec,resume)};
+
+$('done').onclick=()=>{clearInterval(tick);const p=P(),n=document.querySelectorAll('[data-task]').length,c=run.checks.length,sec=used();
+ const s={kind:run.kind,ref:run.ref,skill:run.skill,date:new Date().toISOString(),minutes:Math.max(1,Math.ceil(sec/60)),seconds:sec,limit:run.limit,completion:c/n,peek:run.peek,code:inspected?inspected.summary:null};
+ if(run.kind==='d'){const codeOk=!inspected||inspected.missing.length===0;s.star=c===n&&sec<=run.limit&&!run.peek&&codeOk}
+ if(run.kind==='m'){s.score=c;s.missed=RUBRIC.map((r,i)=>run.checks.includes(i)?null:r[1]).filter(Boolean);if(inspected)s.missed=[...new Set([...s.missed,...inspected.missingSkills])]}
+ p.sessions.push(s);if(run.slot){p.slots[run.slot]=p.slots[run.slot]||{};if(s.completion>=.67)p.slots[run.slot].done=true}
+ const last={...run};delete p.active;save();report(s,last)};
+
+function report(s,r){let title,msg,next,cls='notice';
+ if(s.kind==='d'){const sk=SK.find(x=>x.id===s.skill),n=stars(s.skill);title=s.star?`⭐ 拿到一顆星！${sk.name}`:s.completion===1?`✅ 完成了！${sk.name}`:`🌱 繼續加油！${sk.name}`;
+  const why=[];if(s.completion<1)why.push('還有完成條件沒做到');if(s.seconds>s.limit)why.push(`超時 ${fmt(s.seconds-s.limit).slice(1)}`);if(s.peek)why.push('看了標準寫法');if(s.code&&s.code.missing.length)why.push('作品檢查少了：'+s.code.missing.join('、'));
+  msg=s.star?`不看範例、在 ${Math.ceil(s.limit/60)} 分鐘內完成！這招已累積 ${n} ★${n>=2?'，已經練熟了 💪':'，再拿 1 ★ 就練熟。'}`:`這次沒拿到 ★：${why.join('；')}。這很正常——反覆練就是為了把它變快。`;if(!s.star)cls='notice warn';
+  next=s.star?'照課表繼續下一個練習。':'建議「同一招再練一題」，換個題目、同樣的寫法，不看範例再做一次。'}
+ else if(s.kind==='m'){title=`🏁 模擬賽完成：${s.score}/${RUBRIC.length} 分`;const miss=[...new Set(s.missed)].map(m=>m==='save'?'存檔':SK.find(x=>x.id===m).name);msg=miss.length?`還沒做到：${miss.join('、')}。下一次的「弱點重練」會優先練這些。`:'全部做到了！比賽就照這個節奏。';if(miss.length)cls='notice warn';next=miss.includes('存檔')?'⚠️ 比賽最痛的失分是沒存檔，下次 28 分鐘一定先存！':'回地圖看看下一段。'}
+ else{title=s.completion===1?'⭐ 延伸挑戰完成！':'🌱 延伸挑戰進行中';msg='延伸挑戰是加分題，練習把 5 招組合起來。';next='可以再挑一個延伸挑戰，或回去重練某一招。'}
+ $('rTitle').textContent=title;$('rMsg').className=cls;$('rMsg').textContent=msg;$('rNext').textContent=next;
+ $('rStats').innerHTML=`<div class="stat"><b>${Math.round(s.completion*100)}%</b><span class="small">完成條件</span></div><div class="stat"><b>${fmt(s.seconds).replace('+','')}</b><span class="small">用時（限時 ${Math.round(s.limit/60)} 分）</span></div>${s.code?`<div class="stat"><b>${s.code.total}</b><span class="small">程式積木數</span></div>`:''}`;
+ const nx=nextSlot();$('rGo').style.display=nx?'inline-block':'none';$('rGo').onclick=()=>openSlot(nx[0],nx[1]);$('rHome').onclick=home;
+ $('rRetry').style.display=s.kind==='d'?'inline-block':'none';$('rRetry').onclick=()=>freeDrill(s.skill);show('report')}
+
+/* ---- .sb3 作品檢查：只在本機處理 ---- */
+async function readProject(file){if(!/\.sb3$/i.test(file.name))throw Error('請選擇 Scratch .sb3 檔案');if(file.size>15e6)throw Error('檔案過大（上限 15MB）');
+ const ab=await file.arrayBuffer(),d=new DataView(ab),b=new Uint8Array(ab),td=new TextDecoder();let e=-1;for(let i=b.length-22;i>=Math.max(0,b.length-65557);--i)if(d.getUint32(i,true)===0x06054b50){e=i;break}if(e<0)throw Error('檔案格式不正確');
+ let at=d.getUint32(e+16,true),n=d.getUint16(e+10,true),entry;for(let i=0;i<n;i++){if(d.getUint32(at,true)!==0x02014b50)throw Error('檔案格式不正確');const nl=d.getUint16(at+28,true),ex=d.getUint16(at+30,true),cm=d.getUint16(at+32,true),name=td.decode(b.slice(at+46,at+46+nl));if(name==='project.json'){entry={method:d.getUint16(at+10,true),size:d.getUint32(at+20,true),offset:d.getUint32(at+42,true)};break}at+=46+nl+ex+cm}
+ if(!entry)throw Error('作品不含 project.json');const j=entry.offset,st=j+30+d.getUint16(j+26,true)+d.getUint16(j+28,true);let raw=b.slice(st,st+entry.size);
+ if(entry.method===8){try{raw=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer())}catch{throw Error('這個瀏覽器無法解壓縮，請改用新版 Chrome／Edge')}}else if(entry.method!==0)throw Error('壓縮方式不支援');
+ const p=JSON.parse(td.decode(raw));if(!Array.isArray(p.targets))throw Error('不是 Scratch 3 作品');return p}
+function analyze(p,kind,skill){const ops=new Set();let total=0;for(const t of p.targets)for(const x of Object.values(t.blocks||{}))if(x&&x.opcode){ops.add(x.opcode);total++}
+ if(!total)throw Error('沒有偵測到程式積木');const has=g=>g.some(o=>ops.has(o));const label={sensing_keypressed:'按鍵偵測',motion_changexby:'移動',data_setvariableto:'變數設定',data_changevariableby:'變數改變',sensing_touchingobject:'碰撞偵測',control_if:'如果…那麼',control_create_clone_of:'建立分身',control_start_as_clone:'當分身產生',operator_random:'隨機取數',event_broadcast:'廣播',event_whenbroadcastreceived:'當收到廣播'};
+ const check=sk=>SK.find(s=>s.id===sk).need.filter(g=>!has(g)).map(g=>label[g[0]]||g[0]);
+ let missing=[],missingSkills=[];if(kind==='d')missing=check(skill);if(kind==='m'){SK.forEach(s=>{const m=check(s.id);if(m.length){missingSkills.push(s.id);missing.push(...m)}})}
+ return{missing,missingSkills,summary:{total,missing}}}
+$('sbFile').onchange=async e=>{inspected=null;const f=e.target.files?.[0];if(!f)return;$('sbOut').textContent='檢查中…';
+ try{const proj=await readProject(f);inspected=analyze(proj,run.kind,run.skill);$('sbOut').textContent=`✅ 已讀取（${inspected.summary.total} 個積木），存檔成功！`+(run.kind==='e'?'':inspected.missing.length?`\n⚠️ 沒找到這招需要的積木：${inspected.missing.join('、')}。請確認有用對方法。`:'\n👍 這招需要的積木都有用到。')}
+ catch(err){$('sbOut').textContent='⚠️ 無法讀取：'+err.message}};
+
+load();login();
 </script></body></html>
